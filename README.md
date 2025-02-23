@@ -1,10 +1,10 @@
 <p align="center">
-  <a href="https://github.com/HA-Bots/Auto-Filter-Bot">
-    <img src="https://graph.org/file/a66dbf46acf369e26d48a.jpg" alt="Auto Filter Bot">
-  </a>
+  <a href="https://github.com/HA-Bots/Auto-Filter-Bot">
+    <img src="https://graph.org/file/a66dbf46acf369e26d48a.jpg" alt="Auto Filter Bot">
+  </a>
 </p>
 <h1 align="center">
-  <b>𝘼𝙪𝙩𝙤 𝙁𝙞𝙡𝙩𝙚𝙧 𝘽𝙤𝙩</b>
+  <b>𝘼𝙪𝙩𝙤 𝙁𝙞𝙡𝙩𝙚𝙧 𝘽𝙤𝙩</b>
 </h1>
 
 [![Typing SVG](https://readme-typing-svg.herokuapp.com/?lines=𝑊𝑒𝑙𝑐𝑜𝑚𝑒!;𝐶𝑟𝑒𝑎𝑡𝑒𝑑+𝑏𝑦+@HA_Bots;𝐴+𝑠𝑖𝑚𝑝𝑙𝑒+𝑎𝑛𝑑+𝑝𝑜𝑤𝑒𝑟𝑓𝑢𝑙+𝐵𝑜𝑡!;𝐼𝑛𝑑𝑒𝑥𝑒𝑠+𝐹𝑖𝑙𝑒𝑠+𝑎𝑏𝑜𝑣𝑒+4𝐺𝐵)](https://github.com/HA-Bots/Auto-Filter-Bot)
@@ -29,14 +29,15 @@
 - [x] 𝐵𝑜𝑡 𝑆𝑡𝑎𝑡𝑠
 - [x] 𝑆𝑝𝑒𝑙𝑙𝑖𝑛𝑔 𝐶ℎ𝑒𝑐𝑘 𝐹𝑒𝑎𝑡𝑢𝑟𝑒
 - [x] 𝐴𝑢𝑡𝑜 𝐷𝑒𝑙𝑒𝑡𝑒
-- [x] 𝐴𝑛𝑑 𝑀𝑜𝑟𝑒...
-
+- [x] 𝐴𝑛𝑑 𝑀𝑜𝑟𝑒... Demo Bot - <a href=https://t.me/HA_Auto_Filter_Test_Bot>Here</a>
 
 ## 𝐶𝑜𝑚𝑚𝑎𝑛𝑑𝑠
 ```
 • /start - to check bot alive or not.
 • /index_channels - to check how many index channel id added.
 • /stats - to get bot status.
+• /ping - view bot's ping (latency)
+• /telegraph - generate telegraph image link
 • /settings - to change group settings as your wish.
 • /set_template - to set custom imdb template.
 • /set_caption - to set custom bot files caption.
@@ -64,6 +65,10 @@
 • /set_fsub - to set force subscribe channel.
 • /remove_fsub - to remove force subscribe channel.
 • /set_pm_search - only for bot admin, to do on/off
+• /add_premium - add user as premium user
+• /remove_premium - remove premium user
+• /plan - view premium plans
+• /myplan - view my premium plans
 ```
 
 ## Variables
@@ -87,30 +92,15 @@
 
 ## Deploy
 <details><summary>Deploy To Heroku</summary>
-<p>
 <br>
-<b>Click the button below to deploy bot on Heroku.</b>
+• Connect repo to heroku app
 <br>
 <br>
-
-<a href="https://heroku.com/deploy?template=https://github.com/HA-Bots/Auto-Filter-Bot">
-  <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy To Heroku">
-</a>
-</p>
+• Then click deploy button
 </details>
 
 <details><summary>Deploy To Koyeb</summary>
 <br>
-<b>Click the Deploy to Koyeb button below.</b>
-<br>
-<br>
-
-[![Deploy to Koyeb](https://www.koyeb.com/static/images/deploy/button.svg)](https://app.koyeb.com/deploy?type=git&repository=github.com/HA-Bots/Auto-Filter-Bot&branch=main&name=Auto-Filter-Bot)
-</details>
-
-<details><summary>Deploy To Render</summary>
-<br>
-<b>
 Use these commands:
 <br>
 <br>
@@ -118,58 +108,45 @@ Use these commands:
 <br>
 <br>
 • Start Command: <code>python3 bot.py</code>
-<br>
-<br>
-<b>Click on the below button to deploy on render.</b>
-<br>
-<br>
-<a href="https://render.com/deploy?repo=https://github.com/HA-Bots/Auto-Filter-Bot/tree/main">
-<img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy to Render">
-</a>
 </details>
+
+<details><summary>Deploy To Render</summary>
+<br>
+Use these commands:
+<br>
+<br>
+• Build Command: <code>pip3 install -U -r requirements.txt</code>
+<br>
+<br>
+• Start Command: <code>python3 bot.py</code>
+</details>
+
 <details><summary>Deploy To VPS</summary>
 <br>
-<br>
-• Build the Docker Image:
-<br>
-<br>
-<p>
-<pre>
-sudo docker build -t auto-filter-bot .
-</pre>
-</p>
+• Build the Docker Image: <code>sudo docker build -t auto-filter-bot .</code>
 <br>
 <br>
-• Run the Docker Container as Web App:
-<br>
-<br>
-<p>
-<pre>
-sudo docker run -d -p 80:80 --name Auto-Filter-Bot auto-filter-bot
-</pre>
-</p>
-<br>
-<br>
+• Run the Docker Container as Web App: <code>sudo docker run -d -p 80:80 --name Auto-Filter-Bot auto-filter-bot</code>
 </details>
 
 ## Support
 * [![Support](https://img.shields.io/static/v1?label=Support&message=Group&color=critical)](https://t.me/HA_Bots_Support)
 * [![Updates](https://img.shields.io/static/v1?label=Updates&message=Channel&color=critical)](https://t.me/HA_Bots)
 
-## Credits 
+## Credits 
 * [![EvaMaria](https://img.shields.io/static/v1?label=EvaMaria&message=Developers&color=critical)](https://t.me/TeamEvamaria)
 * [![Hansaka](https://img.shields.io/static/v1?label=Hansaka&message=TG&color=critical)](https://t.me/Hansaka_Anuhas)
 
 ## Thanks To
- - [Pyrogram](https://github.com/pyrogram/pyrogram) and [PyroFork](https://github.com/Mayuri-Chan/pyrofork) For Telegram MTProto API Framework
- - [Contributors](https://github.com/HA-Bots/Auto-Filter-Bot/graphs/contributors) For free helps
- - And to everyone who helped
+ - [Pyrogram](https://github.com/pyrogram/pyrogram) and [PyroFork](https://github.com/Mayuri-Chan/pyrofork) For Telegram MTProto API Framework
+ - [Contributors](https://github.com/HA-Bots/Auto-Filter-Bot/graphs/contributors) For free helps
+ - And to everyone who helped
 
 ## Note
- - Importing this repo instead of forking is strictly prohibited, Kindly fork and edit as your wish. Must Give Credits for [developer(s)](https://t.me/HA_Bots)
- - If you find any bugs or errors, [report](https://t.me/HA_Bots_Support) it
+ - Importing this repo instead of forking is strictly prohibited, Kindly fork and edit as your wish. Must Give Credits for [developer(s)](https://t.me/HA_Bots)
+ - If you find any bugs or errors, [report](https://t.me/HA_Bots_Support) it
 
 ## Disclaimer
-[![GNU General Public License v3.0](https://www.gnu.org/graphics/gplv3-with-text-136x68.png)](https://www.gnu.org/licenses/agpl-3.0.en.html#header)  
+[![GNU General Public License v3.0](https://www.gnu.org/graphics/gplv3-with-text-136x68.png)](https://www.gnu.org/licenses/agpl-3.0.en.html#header)  
 Licensed under [GNU AGPL v3.0](https://github.com/HA-Bots/Auto-Filter-Bot/blob/main/LICENSE)
 Selling The Codes To Other People For Money Is *Strictly Prohibited*.
