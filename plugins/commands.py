@@ -567,6 +567,8 @@ async def remove_premium_cmd_handler(client, message):
         
 @Client.on_message(filters.command("plan"))
 async def plans_list(client, message):
+    if len(OWNER_UPI_ID) == 0 or len(PAYMENT_QR) == 0:
+        return await message.reply_text("this feature is not available")
     btn = [[
         InlineKeyboardButton("ꜱᴇɴᴅ ᴘᴀʏᴍᴇɴᴛ ʀᴇᴄᴇɪᴘᴛ 🧾", url=OWNER_USERNAME)
     ],[
@@ -581,6 +583,8 @@ async def plans_list(client, message):
         
 @Client.on_message(filters.command("myplan"))
 async def check_plans_cmd(client, message):
+    if len(OWNER_UPI_ID) == 0 or len(PAYMENT_QR) == 0:
+        return await message.reply_text("this feature is not available")
     user_id  = message.from_user.id
     if await db.has_premium_access(user_id):         
         remaining_time = await db.check_remaining_uasge(user_id)             
