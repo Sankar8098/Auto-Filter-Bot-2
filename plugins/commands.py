@@ -524,17 +524,19 @@ async def give_premium_cmd_handler(client, message):
         return
     if len(message.command) == 3:
         user_id = int(message.command[1])  # Convert the user_id to integer
+        if await db.has_premium_access(user_id):      
+            return await message.reply_text('This user is already as premium user')
         time = message.command[2]        
         seconds = await get_seconds(time)
         if seconds > 0:
             expiry_time = datetime.datetime.now() + datetime.timedelta(seconds=seconds)
             user_data = {"id": user_id, "expiry_time": expiry_time} 
             await db.update_premium_user(user_data)  # Use the update_user method to update or insert user data
-            await message.reply_text("Premium access added to the user.")            
-            await client.send_message(
-                chat_id=user_id,
-                text=f"<b>ᴘʀᴇᴍɪᴜᴍ ᴀᴅᴅᴇᴅ ᴛᴏ ʏᴏᴜʀ ᴀᴄᴄᴏᴜɴᴛ ꜰᴏʀ {time} ᴇɴᴊᴏʏ 😀\n</b>",                
-            )
+            await message.reply_text("Premium access added to the user.")
+            try:
+                await client.send_message(chat_id=user_id, text=f"<b>ᴘʀᴇᴍɪᴜᴍ ᴀᴅᴅᴇᴅ ᴛᴏ ʏᴏᴜʀ ᴀᴄᴄᴏᴜɴᴛ ꜰᴏʀ {time} ᴇɴᴊᴏʏ 😀\n</b>")
+            except:
+                pass
         else:
             await message.reply_text("Invalid time format. Please use '1day for days', '1hour for hours', or '1min for minutes', or '1month for months' or '1year for year'")
     else:
@@ -548,20 +550,15 @@ async def remove_premium_cmd_handler(client, message):
         return
     if len(message.command) == 2:
         user_id = int(message.command[1])  # Convert the user_id to integer
-        time = "1s"
-        seconds = await get_seconds(time)
-        if seconds > 0:
-            expiry_time = datetime.datetime.now() + datetime.timedelta(seconds=seconds)
-            user_data = {"id": user_id, "expiry_time": expiry_time}  # Using "id" instead of "user_id"
-            await db.update_premium_user(user_data)  # Use the update_user method to update or insert user data
-            await message.reply_text("Premium access removed to the user.")
-            await client.send_message(
-                chat_id=user_id,
-                text=f"<b>premium removed by admins \n\n Contact Admin if this is mistake \n\n 👮 Admin : {OWNER_USERNAME} \n</b>",
-                disable_web_page_preview=True
-            )
-        else:
-            await message.reply_text("Invalid time format.'")
+        user_data = {"id": user_id, "expiry_time": None}  # Using "id" instead of "user_id"
+        if not await db.has_premium_access(user_id):   
+            return await message.reply_text('This user is not as premium user')
+        await db.update_premium_user(user_data)  # Use the update_user method to update or insert user data
+        await message.reply_text("Premium access removed to the user.")
+        try:
+            await client.send_message(chat_id=user_id, text=f"<b>premium removed by admins \n\n Contact Admin if this is mistake \n\n 👮 Admin : {OWNER_USERNAME} \n</b>", disable_web_page_preview=True)
+        except:
+            pass
     else:
         await message.reply_text("Usage: /remove_premium user_id")
         
