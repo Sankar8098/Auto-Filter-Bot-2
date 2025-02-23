@@ -37,8 +37,7 @@ class Database:
     def __init__(self):
         self.col = mydb.Users
         self.grp = mydb.Groups
-        self.users = mydb.uersz
-        self.botcol = mydb["bot_id"]
+        self.prm_users = mydb.Premium_Users
 
     def new_user(self, id, name):
         return dict(
@@ -172,15 +171,15 @@ class Database:
     async def get_db_size(self):
         return (await mydb.command("dbstats"))['dataSize']
    
-    async def get_user(self, user_id):
-        user_data = await self.users.find_one({"id": user_id})
+    async def get_premium_user(self, user_id):
+        user_data = await self.prm_users.find_one({"id": user_id})
         return user_data
             
-    async def update_user(self, user_data):
-        await self.users.update_one({"id": user_data["id"]}, {"$set": user_data}, upsert=True)
+    async def update_premium_user(self, user_data):
+        await self.prm_users.update_one({"id": user_data["id"]}, {"$set": user_data}, upsert=True)
 
     async def has_premium_access(self, user_id):
-        user_data = await self.get_user(user_id)
+        user_data = await self.get_premium_user(user_id)
         if user_data:
             expiry_time = user_data.get("expiry_time")
             if expiry_time is None:
@@ -189,50 +188,37 @@ class Database:
             elif isinstance(expiry_time, datetime.datetime) and datetime.datetime.now() <= expiry_time:
                 return True
             else:
-                await self.users.update_one({"id": user_id}, {"$set": {"expiry_time": None}})
+                await self.prm_users.update_one({"id": user_id}, {"$set": {"expiry_time": None}})
         return False
     
-    async def check_remaining_uasge(self, userid):
+    async def check_remaining_premium_uasge(self, userid):
         user_id = userid
-        user_data = await self.get_user(user_id)        
+        user_data = await self.get_premium_user(user_id)        
         expiry_time = user_data.get("expiry_time")
         # Calculate remaining time
         remaining_time = expiry_time - datetime.datetime.now()
         return remaining_time
     
-    async def get_free_trial_status(self, user_id):
-        user_data = await self.get_user(user_id)
+    async def get_free_premium_trial_status(self, user_id):
+        user_data = await self.get_premium_user(user_id)
         if user_data:
             return user_data.get("has_free_trial", False)
         return False
 
-    async def give_free_trail(self, userid):        
+    async def give_free_premium_trail(self, userid):        
         user_id = userid
         seconds = 5*60         
         expiry_time = datetime.datetime.now() + datetime.timedelta(seconds=seconds)
         user_data = {"id": user_id, "expiry_time": expiry_time, "has_free_trial": True}
-        await self.users.update_one({"id": user_id}, {"$set": user_data}, upsert=True)
+        await self.prm_users.update_one({"id": user_id}, {"$set": user_data}, upsert=True)
 
     async def all_premium_users(self):
-        count = await self.users.count_documents({
+        count = await self.prm_users.count_documents({
         "expiry_time": {"$gt": datetime.datetime.now()}
         })
         return count
 
-    async def get_pm_search_status(self, bot_id):
-        bot = await self.botcol.find_one({'id': bot_id})
-        if bot and bot.get('bot_pm_search'):
-            return bot['bot_pm_search']
-        else:
-            return IS_PM_SEARCH
-
-    async def update_pm_search_status(self, bot_id, enable):
-        bot = await self.botcol.find_one({'id': int(bot_id)})
-        if bot:
-            await self.botcol.update_one({'id': int(bot_id)}, {'$set': {'bot_pm_search': enable}})
-        else:
-            await self.botcol.insert_one({'id': int(bot_id), 'bot_pm_search': enable})
-
+    
     async def get_all_chats_count(self):
         grp = await self.grp.find().to_list(None)
         return grp
