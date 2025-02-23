@@ -17,8 +17,6 @@ CAP = {}
 
 @Client.on_message(filters.private & filters.text & filters.incoming)
 async def pm_search(client, message):
-    if message.text.startswith("/"):
-        return
     files, n_offset, total = await get_search_results(message.text)
     btn = [[
         InlineKeyboardButton("🗂 ᴄʟɪᴄᴋ ʜᴇʀᴇ 🗂", url=FILMS_LINK)
