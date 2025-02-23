@@ -529,7 +529,7 @@ async def give_premium_cmd_handler(client, message):
         if seconds > 0:
             expiry_time = datetime.datetime.now() + datetime.timedelta(seconds=seconds)
             user_data = {"id": user_id, "expiry_time": expiry_time} 
-            await db.update_user(user_data)  # Use the update_user method to update or insert user data
+            await db.update_premium_user(user_data)  # Use the update_user method to update or insert user data
             await message.reply_text("Premium access added to the user.")            
             await client.send_message(
                 chat_id=user_id,
@@ -553,7 +553,7 @@ async def remove_premium_cmd_handler(client, message):
         if seconds > 0:
             expiry_time = datetime.datetime.now() + datetime.timedelta(seconds=seconds)
             user_data = {"id": user_id, "expiry_time": expiry_time}  # Using "id" instead of "user_id"
-            await db.update_user(user_data)  # Use the update_user method to update or insert user data
+            await db.update_premium_user(user_data)  # Use the update_user method to update or insert user data
             await message.reply_text("Premium access removed to the user.")
             await client.send_message(
                 chat_id=user_id,
@@ -587,7 +587,7 @@ async def check_plans_cmd(client, message):
         return await message.reply_text("this feature is not available")
     user_id  = message.from_user.id
     if await db.has_premium_access(user_id):         
-        remaining_time = await db.check_remaining_uasge(user_id)             
+        remaining_time = await db.check_remaining_premium_uasge(user_id)             
         expiry_time = remaining_time + datetime.datetime.now()
         await message.reply_text(f"**Your plans details are :\n\nRemaining Time : {remaining_time}\n\nExpirytime : {expiry_time}**")
     else:
