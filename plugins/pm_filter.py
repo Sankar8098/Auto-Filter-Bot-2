@@ -523,6 +523,8 @@ async def cb_handler(client: Client, query: CallbackQuery):
         await query.message.delete()
         
     elif query.data.startswith("stream"):
+        if await db.has_premium_access(query.from_user.id):
+            return await query.answer("Only for premium users, use /plan for more details", show_alert=True)
         file_id = query.data.split('#', 1)[1]
         msg = await client.send_cached_media(chat_id=BIN_CHANNEL, file_id=file_id)
         watch = f"{URL}watch/{msg.id}"
@@ -796,6 +798,8 @@ async def cb_handler(client: Client, query: CallbackQuery):
         await query.message.edit(f'Deleted {deleted} files in your database in your query {query_}')
      
     elif query.data.startswith("send_all"):
+        if await db.has_premium_access(query.from_user.id):
+            return await query.answer("Only for premium users, use /plan for more details", show_alert=True)
         ident, key, req = query.data.split("#")
         if int(req) != query.from_user.id:
             return await query.answer(f"Hello {query.from_user.first_name},\nDon't Click Other Results!", show_alert=True)        
