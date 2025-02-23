@@ -43,9 +43,9 @@ class Bot(Client):
         client = MongoClient(DATABASE_URL, server_api=ServerApi('1'))
         try:
             client.admin.command('ping')
-            print("Pinged your deployment. You successfully connected to MongoDB!")
+            print("Successfully connected to MongoDB!")
         except Exception as e:
-            print("Something Went Wrong While Connecting To Database!", e)
+            print("Error - Make sure MongoDB URL is correct, exiting now")
             exit()
         await super().start()
         if os.path.exists('restart.txt'):
@@ -64,9 +64,6 @@ class Bot(Client):
         temp.B_NAME = me.first_name
         username = '@' + me.username
         print(f"{me.first_name} is started now 🤗")
-        #groups = await db.get_all_chats_count()
-        #for grp in groups:
-            #await save_group_settings(grp['id'], 'fsub', "")
         app = web.AppRunner(web_app)
         await app.setup()
         await web.TCPSite(app, "0.0.0.0", PORT).start()
