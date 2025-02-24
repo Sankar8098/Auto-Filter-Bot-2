@@ -1,5 +1,5 @@
 from pyrogram.errors import UserNotParticipant, FloodWait
-from info import LONG_IMDB_DESCRIPTION
+from info import LONG_IMDB_DESCRIPTION, TIME_ZONE
 from imdb import Cinemagoer
 import asyncio
 from pyrogram.types import InlineKeyboardButton
@@ -216,7 +216,7 @@ def get_readable_time(seconds):
     return result
 
 def get_wish():
-    tz = pytz.timezone('Asia/Colombo')
+    tz = pytz.timezone(TIME_ZONE)
     time = datetime.now(tz)
     now = time.strftime("%H")
     if now < "12":
