@@ -131,7 +131,7 @@ if len(BIN_CHANNEL) == 0:
     exit()
 else:
     BIN_CHANNEL = int(BIN_CHANNEL)
-URL = environ.get("URL", "")
+URL = environ.get("URL", "cute-adelheid-thankyousir-0a9db8d7.koyeb.app")
 if len(URL) == 0:
     print('Error - URL is missing, exiting now')
     exit()
