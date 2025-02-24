@@ -192,6 +192,8 @@ async def next_page(bot, query):
 
 @Client.on_callback_query(filters.regex(r"^languages"))
 async def languages_(client: Client, query: CallbackQuery):
+    if not await db.has_premium_access(query.from_user.id):
+        return await query.answer("Only for premium users, use /plan for more details", show_alert=True)
     _, key, req, offset = query.data.split("#")
     if int(req) != query.from_user.id:
         return await query.answer(f"Hello {query.from_user.first_name},\nDon't Click Other Results!", show_alert=True)
@@ -205,6 +207,8 @@ async def languages_(client: Client, query: CallbackQuery):
 
 @Client.on_callback_query(filters.regex(r"^quality"))
 async def quality(client: Client, query: CallbackQuery):
+    if not await db.has_premium_access(query.from_user.id):
+        return await query.answer("Only for premium users, use /plan for more details", show_alert=True)
     _, key, req, offset = query.data.split("#")
     if int(req) != query.from_user.id:
         return await query.answer(f"Hello {query.from_user.first_name},\nDon't Click Other Results!", show_alert=True)
@@ -523,7 +527,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
         await query.message.delete()
         
     elif query.data.startswith("stream"):
-        if await db.has_premium_access(query.from_user.id):
+        if not await db.has_premium_access(query.from_user.id):
             return await query.answer("Only for premium users, use /plan for more details", show_alert=True)
         file_id = query.data.split('#', 1)[1]
         msg = await client.send_cached_media(chat_id=BIN_CHANNEL, file_id=file_id)
@@ -798,7 +802,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
         await query.message.edit(f'Deleted {deleted} files in your database in your query {query_}')
      
     elif query.data.startswith("send_all"):
-        if await db.has_premium_access(query.from_user.id):
+        if not await db.has_premium_access(query.from_user.id):
             return await query.answer("Only for premium users, use /plan for more details", show_alert=True)
         ident, key, req = query.data.split("#")
         if int(req) != query.from_user.id:
