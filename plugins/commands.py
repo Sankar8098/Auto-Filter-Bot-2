@@ -10,7 +10,7 @@ from pyrogram import Client, filters, enums
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from database.ia_filterdb import Media, get_file_details, delete_files
 from database.users_chats_db import db
-from info import FORCE_SUB_CHANNELS, STICKERS, INDEX_CHANNELS, ADMINS, IS_VERIFY, VERIFY_TUTORIAL, VERIFY_EXPIRE, SHORTLINK_API, SHORTLINK_URL, DELETE_TIME, SUPPORT_LINK, UPDATES_LINK, LOG_CHANNEL, PICS, IS_STREAM, PAYMENT_QR, OWNER_USERNAME, REACTIONS, PM_FILE_DELETE_TIME, OWNER_UPI_ID
+from info import IS_PREMIUM, FORCE_SUB_CHANNELS, STICKERS, INDEX_CHANNELS, ADMINS, IS_VERIFY, VERIFY_TUTORIAL, VERIFY_EXPIRE, SHORTLINK_API, SHORTLINK_URL, DELETE_TIME, SUPPORT_LINK, UPDATES_LINK, LOG_CHANNEL, PICS, IS_STREAM, PAYMENT_QR, OWNER_USERNAME, REACTIONS, PM_FILE_DELETE_TIME, OWNER_UPI_ID
 from utils import get_settings, get_size, is_subscribed, is_check_admin, get_shortlink, get_verify_status, update_verify_status, save_group_settings, temp, get_readable_time, get_wish, get_seconds
 
 @Client.on_message(filters.command("start") & filters.incoming)
@@ -523,8 +523,12 @@ async def give_premium_cmd_handler(client, message):
     if user_id not in ADMINS:
         await message.delete()
         return
+    if not IS_PREMIUM:
+        return await message.reply_text('IS_PREMIUM is disabled, it maybe due to empty of PAYMENT_QR or OWNER_UPI_ID')
     if len(message.command) == 3:
-        user_id = int(message.command[1])  # Convert the user_id to integer
+        user_id = int(message.command[1])# Convert the user_id to integer
+        if user_id in ADMINS:
+            return await message.reply_text('ADMINS not need premium access')
         if await db.has_premium_access(user_id):      
             return await message.reply_text('This user is already as premium user')
         time = message.command[2]        
@@ -549,8 +553,12 @@ async def remove_premium_cmd_handler(client, message):
     if user_id not in ADMINS:
         await message.delete()
         return
+    if not IS_PREMIUM:
+        return await message.reply_text('IS_PREMIUM is disabled, it maybe due to empty of PAYMENT_QR or OWNER_UPI_ID')
     if len(message.command) == 2:
         user_id = int(message.command[1])  # Convert the user_id to integer
+        if user_id in ADMINS:
+            return await message.reply_text('ADMINS not need premium access')
         user_data = {"id": user_id, "expiry_time": None}  # Using "id" instead of "user_id"
         if not await db.has_premium_access(user_id):   
             return await message.reply_text('This user is not as premium user')
@@ -565,8 +573,10 @@ async def remove_premium_cmd_handler(client, message):
         
 @Client.on_message(filters.command("plan"))
 async def plans_list(client, message):
-    if len(OWNER_UPI_ID) == 0 or len(PAYMENT_QR) == 0:
-        return await message.reply_text("this feature is not available")
+    if not IS_PREMIUM:
+        return await message.reply_text('This option is disabled')
+    if message.from_user.id in ADMINS:
+        return await message.reply_text('This option not have for ADMINS')
     btn = [[
         InlineKeyboardButton("ꜱᴇɴᴅ ᴘᴀʏᴍᴇɴᴛ ʀᴇᴄᴇɪᴘᴛ 🧾", url=OWNER_USERNAME)
     ],[
@@ -581,9 +591,11 @@ async def plans_list(client, message):
         
 @Client.on_message(filters.command("myplan"))
 async def check_plans_cmd(client, message):
-    if len(OWNER_UPI_ID) == 0 or len(PAYMENT_QR) == 0:
-        return await message.reply_text("this feature is not available")
+    if not IS_PREMIUM:
+        return await message.reply_text('This option is disabled')
     user_id  = message.from_user.id
+    if user_id in ADMINS:
+        return await message.reply_text('This option not have for ADMINS')
     if await db.has_premium_access(user_id):         
         remaining_time = await db.check_remaining_premium_uasge(user_id)             
         expiry_time = remaining_time + datetime.datetime.now()
