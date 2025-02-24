@@ -112,7 +112,7 @@ SPELL_CHECK = is_enabled("SPELL_CHECK", True)
 SHORTLINK = is_enabled('SHORTLINK', False)
 
 #premium info
-IS_PREMIUM = is_enabled('IS_PREMIUM', True)
+IS_PREMIUM = is_enabled('IS_PREMIUM', False)
 PAYMENT_QR = environ.get('PAYMENT_QR', '')
 if len(PAYMENT_QR) == 0:
     print('Info - PAYMENT_QR is empty')
