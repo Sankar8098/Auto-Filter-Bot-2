@@ -131,20 +131,14 @@ if len(BIN_CHANNEL) == 0:
     exit()
 else:
     BIN_CHANNEL = int(BIN_CHANNEL)
-URL = environ.get("URL", "cute-adelheid-thankyousir-0a9db8d7.koyeb.app")
-if len(URL) == 0:
-    print('Error - URL is missing, exiting now')
-    exit()
+MULTI_CLIENT = False
+SLEEP_THRESHOLD = int(environ.get('SLEEP_THRESHOLD', '60'))
+PING_INTERVAL = int(environ.get("PING_INTERVAL", "1200"))  # 20 minutes
+if 'DYNO' in environ:
+    ON_HEROKU = True
 else:
-    if URL.startswith(('https://', 'http://')):
-        if not URL.endswith("/"):
-            URL += '/'
-    elif is_valid_ip(URL):
-        URL = f'http://{URL}/'
-    else:
-        print('Error - URL is not valid, exiting now')
-        exit()
-
+    ON_HEROKU = False
+URL = environ.get("URL", "https://cute-adelheid-thankyousir-0a9db8d7.koyeb.app/")
 #start command reactions and sticker
 REACTIONS = [reactions for reactions in environ.get('REACTIONS', '🤝 😇 🤗 😍 👍 🎅 😐 🥰 🤩 😱 🤣 😘 👏 😛 😈 🎉 ⚡️ 🫡 🤓 😎 🏆 🔥 🤭 🌚 🆒 👻 😁').split()]  # Multiple reactions can be used separated by space
 STICKERS = [sticker for sticker in environ.get('STICKERS', 'CAACAgIAAxkBAAEN4ctnu1NdZUe21tiqF1CjLCZW8rJ28QACmQwAAj9UAUrPkwx5a8EilDYE CAACAgIAAxkBAAEN1pBntL9sz1tuP_qo0bCdLj_xQa28ngACxgEAAhZCawpKI9T0ydt5RzYE').split()]  # Multiple sticker can be used separated by space, use @idstickerbot for get sticker id
