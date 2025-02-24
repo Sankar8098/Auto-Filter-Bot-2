@@ -216,8 +216,7 @@ def get_readable_time(seconds):
     return result
 
 def get_wish():
-    tz = pytz.timezone(TIME_ZONE)
-    time = datetime.now(tz)
+    time = datetime.now(TIME_ZONE)
     now = time.strftime("%H")
     if now < "12":
         status = "ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ 🌞"
