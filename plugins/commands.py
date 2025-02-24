@@ -10,7 +10,7 @@ from pyrogram import Client, filters, enums
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from database.ia_filterdb import Media, get_file_details, delete_files
 from database.users_chats_db import db
-from info import IS_PREMIUM, FORCE_SUB_CHANNELS, STICKERS, INDEX_CHANNELS, ADMINS, IS_VERIFY, VERIFY_TUTORIAL, VERIFY_EXPIRE, SHORTLINK_API, SHORTLINK_URL, DELETE_TIME, SUPPORT_LINK, UPDATES_LINK, LOG_CHANNEL, PICS, IS_STREAM, PAYMENT_QR, OWNER_USERNAME, REACTIONS, PM_FILE_DELETE_TIME, OWNER_UPI_ID
+from info import TIME_ZONE, IS_PREMIUM, FORCE_SUB_CHANNELS, STICKERS, INDEX_CHANNELS, ADMINS, IS_VERIFY, VERIFY_TUTORIAL, VERIFY_EXPIRE, SHORTLINK_API, SHORTLINK_URL, DELETE_TIME, SUPPORT_LINK, UPDATES_LINK, LOG_CHANNEL, PICS, IS_STREAM, PAYMENT_QR, OWNER_USERNAME, REACTIONS, PM_FILE_DELETE_TIME, OWNER_UPI_ID
 from utils import get_settings, get_size, is_subscribed, is_check_admin, get_shortlink, get_verify_status, update_verify_status, save_group_settings, temp, get_readable_time, get_wish, get_seconds
 
 @Client.on_message(filters.command("start") & filters.incoming)
@@ -40,7 +40,7 @@ async def start(client, message):
         await client.send_message(LOG_CHANNEL, script.NEW_USER_TXT.format(message.from_user.mention, message.from_user.id))
 
     verify_status = await get_verify_status(message.from_user.id)
-    if verify_status['is_verified'] and datetime.datetime.now() > verify_status['expire_time']:
+    if verify_status['is_verified'] and datetime.datetime.now(TIME_ZONE) > verify_status['expire_time']:
         await update_verify_status(message.from_user.id, is_verified=False)
     
     if (len(message.command) != 2) or (len(message.command) == 2 and message.command[1] == 'start'):
@@ -54,8 +54,9 @@ async def start(client, message):
             InlineKeyboardButton('🔎 sᴇᴀʀᴄʜ ɪɴʟɪɴᴇ', switch_inline_query_current_chat=''),
             InlineKeyboardButton('📚 ᴀʙᴏᴜᴛ', callback_data='about')
         ],[
-            InlineKeyboardButton('💰 ᴇᴀʀɴ ᴜɴʟɪᴍɪᴛᴇᴅ ᴍᴏɴᴇʏ ʙʏ ʙᴏᴛ 💰', callback_data='earn'),
-            InlineKeyboardButton("🥇 ʙᴜʏ 🥇", url=f"https://t.me/{temp.U_NAME}?start=plans")
+            InlineKeyboardButton('💰 ᴇᴀʀɴ ᴜɴʟɪᴍɪᴛᴇᴅ ᴍᴏɴᴇʏ ʙʏ ʙᴏᴛ 💰', callback_data='earn')
+        ],[
+            InlineKeyboardButton("🥇 ʙᴜʏ ᴘʀᴇᴍɪᴜᴍ 🥇", url=f"https://t.me/{temp.U_NAME}?start=plans")
         ]]
         reply_markup = InlineKeyboardMarkup(buttons)
         await message.reply_photo(
@@ -77,7 +78,7 @@ async def start(client, message):
         verify_status = await get_verify_status(message.from_user.id)
         if verify_status['verify_token'] != token:
             return await message.reply("Your verify token is invalid.")
-        expiry_time = datetime.datetime.now() + datetime.timedelta(seconds=VERIFY_EXPIRE)
+        expiry_time = datetime.datetime.now(TIME_ZONE) + datetime.timedelta(seconds=VERIFY_EXPIRE)
         await update_verify_status(message.from_user.id, is_verified=True, verified_time=time_now(), expire_time=expiry_time)
         if verify_status["link"] == "":
             reply_markup = None
@@ -526,7 +527,7 @@ async def give_premium_cmd_handler(client, message):
         time = message.command[2]        
         seconds = await get_seconds(time)
         if seconds > 0:
-            expiry_time = datetime.datetime.now() + datetime.timedelta(seconds=seconds)
+            expiry_time = datetime.datetime.now(TIME_ZONE) + datetime.timedelta(seconds=seconds)
             user_data = {"id": user_id, "expiry_time": expiry_time} 
             await db.update_premium_user(user_data)  # Use the update_user method to update or insert user data
             await message.reply_text("Premium access added to the user.")
@@ -563,7 +564,7 @@ async def remove_premium_cmd_handler(client, message):
     else:
         await message.reply_text("Usage: /remove_premium user_id")
         
-@Client.on_message(filters.command("plan"))
+@Client.on_message(filters.command("plans"))
 async def plans_list(client, message):
     if not IS_PREMIUM:
         return await message.reply_text('This option is disabled')
@@ -571,8 +572,6 @@ async def plans_list(client, message):
         return await message.reply_text('This option not have for ADMINS')
     btn = [[
         InlineKeyboardButton("ꜱᴇɴᴅ ᴘᴀʏᴍᴇɴᴛ ʀᴇᴄᴇɪᴘᴛ 🧾", url=OWNER_USERNAME)
-    ],[
-        InlineKeyboardButton("⚠️ ᴄʟᴏsᴇ / ᴅᴇʟᴇᴛᴇ ⚠️", callback_data="close_data")
     ]]
     reply_markup = InlineKeyboardMarkup(btn)
     await message.reply_photo(
@@ -590,19 +589,17 @@ async def check_plans_cmd(client, message):
         return await message.reply_text('This option not have for ADMINS')
     if await db.has_premium_access(user_id):         
         remaining_time = await db.check_remaining_premium_uasge(user_id)             
-        expiry_time = remaining_time + datetime.datetime.now()
-        await message.reply_text(f"**Your plans details are :\n\nRemaining Time : {remaining_time}\n\nExpirytime : {expiry_time}**")
+        expiry_time = remaining_time + datetime.datetime.now(TIME_ZONE)
+        await message.reply_text(f"**Your plans details are :\n\nRemaining Time : {get_readable_time(remaining_time.timestamp())}\n\nExpirytime : {expiry_time.strftime("%Y-%m-%d %H:%M")}**")
     else:
-        btn = [ 
-            [InlineKeyboardButton("ɢᴇᴛ ғʀᴇᴇ ᴛʀᴀɪʟ ғᴏʀ 𝟻 ᴍɪɴᴜᴛᴇꜱ ☺️", callback_data="get_trail")],
-            [InlineKeyboardButton("ʙᴜʏ sᴜʙsᴄʀɪᴘᴛɪᴏɴ : ʀᴇᴍᴏᴠᴇ ᴀᴅs", callback_data="buy_premium")],
-            [InlineKeyboardButton("⚠️ ᴄʟᴏsᴇ / ᴅᴇʟᴇᴛᴇ ⚠️", callback_data="close_data")]
-        ]
+        btn = [[
+            InlineKeyboardButton("ɢᴇᴛ ғʀᴇᴇ ᴛʀᴀɪʟ ғᴏʀ 𝟻 ᴍɪɴᴜᴛᴇꜱ ☺️", callback_data="get_trail")
+        ],[
+            InlineKeyboardButton("🥇 ʙᴜʏ ᴘʀᴇᴍɪᴜᴍ 🥇", url=f"https://t.me/{temp.U_NAME}?start=plans")
+        ]]
         reply_markup = InlineKeyboardMarkup(btn)
-        m=await message.reply_sticker("CAACAgIAAxkBAAIBTGVjQbHuhOiboQsDm35brLGyLQ28AAJ-GgACglXYSXgCrotQHjibHgQ")         
-        await message.reply_text("**😢 You Don't Have Any Premium Subscription.\n\n Check Out Our Premium /plan**",reply_markup=reply_markup)
-        await asyncio.sleep(2)
-        await m.delete()
+        await message.reply_text("**😢 You Don't Have Any Premium Subscription.", reply_markup=reply_markup)
+
 
 
 @Client.on_message(filters.command('set_fsub'))
