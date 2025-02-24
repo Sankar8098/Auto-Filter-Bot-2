@@ -5,7 +5,7 @@ import math
 from pyrogram.errors.exceptions.bad_request_400 import MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty
 from Script import script
 from datetime import datetime, timedelta
-from info import ADMINS, URL, MAX_BTN, BIN_CHANNEL, IS_STREAM, DELETE_TIME, FILMS_LINK, LOG_CHANNEL, SUPPORT_GROUP, SUPPORT_LINK, UPDATES_LINK, LANGUAGES, PAYMENT_QR, QUALITY, OWNER_UPI_ID, OWNER_USERNAME
+from info import TIME_ZONE, ADMINS, URL, MAX_BTN, BIN_CHANNEL, IS_STREAM, DELETE_TIME, FILMS_LINK, LOG_CHANNEL, SUPPORT_GROUP, SUPPORT_LINK, UPDATES_LINK, LANGUAGES, PAYMENT_QR, QUALITY, OWNER_UPI_ID, OWNER_USERNAME
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, InputMediaPhoto
 from pyrogram import Client, filters, enums
 from utils import get_size, is_subscribed, is_check_admin, get_wish, get_shortlink, get_readable_time, get_poster, temp, get_settings, save_group_settings
@@ -867,7 +867,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
             async for member in client.get_chat_members(query.message.chat.id, filter=enums.ChatMembersFilter.RESTRICTED):
                 users_id.append(member.user.id)
             for user_id in users_id:
-                await client.ban_chat_member(query.message.chat.id, user_id, datetime.now() + timedelta(seconds=30))
+                await client.ban_chat_member(query.message.chat.id, user_id, datetime.now(TIME_ZONE) + timedelta(seconds=30))
         except Exception as e:
             await query.message.delete()
             await query.message.reply(f'Something went wrong.\n\n<code>{e}</code>')
@@ -889,7 +889,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
                 if member.user.is_deleted:
                     users_id.append(member.user.id)
             for user_id in users_id:
-                await client.ban_chat_member(query.message.chat.id, user_id, datetime.now() + timedelta(seconds=30))
+                await client.ban_chat_member(query.message.chat.id, user_id, datetime.now(TIME_ZONE) + timedelta(seconds=30))
         except Exception as e:
             await query.message.delete()
             await query.message.reply(f'Something went wrong.\n\n<code>{e}</code>')
