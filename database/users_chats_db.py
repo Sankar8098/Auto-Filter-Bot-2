@@ -1,5 +1,5 @@
 from motor.motor_asyncio import AsyncIOMotorClient
-from info import IS_PREMIUM, ADMINS, DATABASE_NAME, DATABASE_URL, FORCE_SUB_CHANNELS, IMDB_TEMPLATE, WELCOME_TEXT, LINK_MODE, TUTORIAL, SHORTLINK_URL, SHORTLINK_API, SHORTLINK, FILE_CAPTION, IMDB, WELCOME, SPELL_CHECK, PROTECT_CONTENT, AUTO_FILTER, AUTO_DELETE, IS_STREAM, VERIFY_EXPIRE
+from info import TIME_ZONE, IS_PREMIUM, ADMINS, DATABASE_NAME, DATABASE_URL, FORCE_SUB_CHANNELS, IMDB_TEMPLATE, WELCOME_TEXT, LINK_MODE, TUTORIAL, SHORTLINK_URL, SHORTLINK_API, SHORTLINK, FILE_CAPTION, IMDB, WELCOME, SPELL_CHECK, PROTECT_CONTENT, AUTO_FILTER, AUTO_DELETE, IS_STREAM, VERIFY_EXPIRE
 import time
 import datetime
 
@@ -174,7 +174,10 @@ class Database:
     async def get_premium_user(self, user_id):
         user_data = await self.prm_users.find_one({"id": user_id})
         return user_data
-            
+
+    async def get_all_premium_users(self):
+        return self.prm_users.find({})
+        
     async def update_premium_user(self, user_data):
         await self.prm_users.update_one({"id": user_data["id"]}, {"$set": user_data}, upsert=True)
 
@@ -187,7 +190,7 @@ class Database:
             if expiry_time is None:
                 # User previously used the free trial, but it has ended.
                 return False
-            elif isinstance(expiry_time, datetime.datetime) and datetime.datetime.now() <= expiry_time:
+            elif isinstance(expiry_time, datetime.datetime) and datetime.datetime.now(TIME_ZONE) <= expiry_time:
                 return True
             else:
                 await self.prm_users.update_one({"id": user_id}, {"$set": {"expiry_time": None}})
@@ -198,7 +201,7 @@ class Database:
         user_data = await self.get_premium_user(user_id)        
         expiry_time = user_data.get("expiry_time")
         # Calculate remaining time
-        remaining_time = expiry_time - datetime.datetime.now()
+        remaining_time = expiry_time - datetime.datetime.now(TIME_ZONE)
         return remaining_time
     
     async def get_free_premium_trial_status(self, user_id):
@@ -210,19 +213,17 @@ class Database:
     async def give_free_premium_trail(self, userid):        
         user_id = userid
         seconds = 5*60         
-        expiry_time = datetime.datetime.now() + datetime.timedelta(seconds=seconds)
+        expiry_time = datetime.datetime.now(TIME_ZONE) + datetime.timedelta(seconds=seconds)
         user_data = {"id": user_id, "expiry_time": expiry_time, "has_free_trial": True}
         await self.prm_users.update_one({"id": user_id}, {"$set": user_data}, upsert=True)
 
     async def all_premium_users(self):
-        count = await self.prm_users.count_documents({
-        "expiry_time": {"$gt": datetime.datetime.now()}
-        })
+        count = await self.prm_users.count_documents({})
         return count
 
     
     async def get_all_chats_count(self):
-        grp = await self.grp.find().to_list(None)
+        grp = await self.grp.count_documents({})
         return grp
         
 db = Database()
