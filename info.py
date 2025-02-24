@@ -125,7 +125,7 @@ if len(PAYMENT_QR) == 0 or len(OWNER_UPI_ID) == 0:
 
 # for stream
 IS_STREAM = is_enabled('IS_STREAM', True)
-BIN_CHANNEL = environ.get("BIN_CHANNEL", "")
+BIN_CHANNEL = environ.get("BIN_CHANNEL", "-1001829883274")
 if len(BIN_CHANNEL) == 0:
     print('Error - BIN_CHANNEL is missing, exiting now')
     exit()
