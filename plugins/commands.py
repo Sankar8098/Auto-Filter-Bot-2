@@ -590,7 +590,7 @@ async def check_plans_cmd(client, message):
     if await db.has_premium_access(user_id):         
         remaining_time = await db.check_remaining_premium_uasge(user_id)             
         expiry_time = remaining_time + datetime.datetime.now(TIME_ZONE)
-        await message.reply_text(f"**Your plans details are :\n\nRemaining Time : {get_readable_time(remaining_time.timestamp())}\n\nExpirytime : {expiry_time.strftime("%Y-%m-%d %H:%M")}**")
+        await message.reply_text(f"**Your plans details are :\n\nRemaining Time : {get_readable_time(remaining_time.timestamp())}\n\nExpirytime : {expiry_time.strftime('%Y-%m-%d %H:%M')}**")
     else:
         btn = [[
             InlineKeyboardButton("ɢᴇᴛ ғʀᴇᴇ ᴛʀᴀɪʟ ғᴏʀ 𝟻 ᴍɪɴᴜᴛᴇꜱ ☺️", callback_data="get_trail")
